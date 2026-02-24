@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jason Pettigrew — Product Leader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Base — evolves darker per section via class */
+      --bg-0: #0C1C13;
+      --bg-1: #0A1810;
+      --bg-2: #08130D;
+      --bg-3: #060E09;
+      --bg-4: #050C08;
+      --bg-5: #040A06;
+
+      /* Accent — terracotta warm */
+      --accent:       #C4876A;
+      --accent-light: #D9A88E;
+      --accent-cool:  #5EC4BE; /* teal for later sections */
+
+      /* Sage — primary highlight */
+      --sage:         #7EAB8A;
+      --sage-light:   #A3C4AC;
+
+      /* Text */
+      --cream:        #F0EBE2;
+      --cream-dim:    #B8B0A6;
+      --cream-muted:  #6E6860;
+
+      --border: rgba(126,171,138,0.12);
+      --border-warm: rgba(196,135,106,0.2);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-0);
+      color: var(--cream);
+      font-family: 'Geist', sans-serif;
+      overflow-x: hidden;
+      font-weight: 400;
+    }
+
+    /* Noise */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9000;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+      z-index: 500;
+      display: flex; align-items: center; gap: 32px;
+      padding: 11px 24px; border-radius: 100px;
+      background: rgba(8,19,13,0.4);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+      transition: background 0.5s, border-color 0.5s;
+      white-space: nowrap;
+    }
+    nav.scrolled { background: rgba(6,14,9,0.92); border-color: rgba(126,171,138,0.22); }
+    .nav-logo {
+      font-family: 'Instrument Serif', serif;
+      font-size: 17px; font-weight: 400;
+      color: var(--cream); text-decoration: none;
+      letter-spacing: 0.01em;
+    }
+    .nav-links { display: flex; gap: 24px; list-style: none; }
+    .nav-links a {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.13em; text-transform: uppercase;
+      color: var(--cream-dim); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--sage-light); }
+
+    /* Claude pill — subtle, in nav */
+    .claude-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--cream-muted);
+      background: rgba(196,135,106,0.08);
+      border: 1px solid rgba(196,135,106,0.18);
+      padding: 5px 12px; border-radius: 100px;
+      transition: color 0.2s, border-color 0.2s;
+      text-decoration: none;
+    }
+    .claude-pill:hover { color: var(--accent-light); border-color: rgba(196,135,106,0.4); }
+    .claude-pill-dot {
+      width: 5px; height: 5px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── SECTION BLOCKS — bg evolution ── */
+    .s0 { background: var(--bg-0); }
+    .s1 { background: var(--bg-1); }
+    .s2 { background: var(--bg-2); }
+    .s3 { background: var(--bg-3); }
+    .s4 { background: var(--bg-4); }
+    .s5 { background: var(--bg-5); }
+
+    section { padding: 120px 7vw; position: relative; overflow: hidden; }
+
+    .section-label {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--sage); margin-bottom: 18px;
+    }
+    .section-label::before {
+      content: '';
+      display: inline-block; width: 18px; height: 1px;
+      background: var(--sage); flex-shrink: 0;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100dvh; position: relative;
+      display: flex; align-items: flex-end;
+      padding: 0 7vw 9vh;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1800&q=80');
+      background-size: cover; background-position: center 30%;
+      transform: scale(1.06);
+      animation: heroZoom 16s ease-out forwards;
+    }
+    @keyframes heroZoom { to { transform: scale(1.0); } }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(8,19,13,1.0) 0%,
+        rgba(8,19,13,0.88) 30%,
+        rgba(8,19,13,0.45) 60%,
+        rgba(8,19,13,0.15) 100%
+      );
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 880px; }
+
+    .hero-eyebrow {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 28px;
+      opacity: 0; transform: translateY(14px);
+      animation: up 0.7s ease 0.2s forwards;
+    }
+    .hero-eyebrow span {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--sage);
+    }
+    .eyebrow-line { width: 28px; height: 1px; background: var(--sage); flex-shrink: 0; }
+
+    .hero-line1 {
+      display: block;
+      font-family: 'Geist', sans-serif;
+      font-weight: 600;
+      font-size: clamp(40px, 6.8vw, 92px);
+      line-height: 0.97;
+      letter-spacing: -0.035em;
+      color: var(--cream);
+      opacity: 0; transform: translateY(30px);
+      animation: up 0.85s ease 0.35s forwards;
+    }
+    .hero-line2 {
+      display: block;
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(44px, 7.4vw, 100px);
+      line-height: 1.08;
+      letter-spacing: -0.01em;
+      color: var(--accent-light);
+      opacity: 0; transform: translateY(30px);
+      animation: up 0.85s ease 0.5s forwards;
+    }
+
+    .hero-sub {
+      margin-top: 26px;
+      font-size: 16px; font-weight: 300; line-height: 1.8;
+      color: var(--cream-dim); max-width: 520px;
+      opacity: 0; transform: translateY(18px);
+      animation: up 0.8s ease 0.65s forwards;
+    }
+
+    .hero-actions {
+      margin-top: 36px;
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+      opacity: 0; transform: translateY(18px);
+      animation: up 0.8s ease 0.8s forwards;
+    }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--bg-2); background: var(--sage);
+      padding: 14px 28px; border-radius: 100px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    .btn-primary:hover { background: var(--sage-light); transform: scale(1.03); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--cream-dim);
+      border: 1px solid rgba(126,171,138,0.22);
+      padding: 14px 28px; border-radius: 100px;
+      text-decoration: none;
+      transition: color 0.2s, border-color 0.2s, transform 0.2s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    .btn-ghost:hover { color: var(--accent-light); border-color: var(--accent); transform: scale(1.03); }
+
+    .scroll-hint {
+      position: absolute; bottom: 32px; right: 7vw; z-index: 2;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      opacity: 0; animation: up 0.8s ease 1.1s forwards;
+    }
+    .scroll-hint span {
+      font-family: 'Geist Mono', monospace;
+      font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--cream-muted); writing-mode: vertical-rl;
+    }
+    .scroll-line {
+      width: 1px; height: 48px;
+      background: linear-gradient(to bottom, var(--sage), transparent);
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes up { to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%,100%{opacity:0.4;} 50%{opacity:1;} }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+    @keyframes dot-pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(0.7);} }
+
+    /* ── AI SECTION ── */
+    .ai-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center;
+    }
+    .ai-left h2 {
+      font-family: 'Instrument Serif', serif;
+      font-weight: 400;
+      font-size: clamp(28px, 3vw, 44px);
+      line-height: 1.2; color: var(--cream);
+      margin-bottom: 20px;
+    }
+    .ai-left h2 em { font-style: italic; color: var(--accent-light); }
+    .ai-left p {
+      font-size: 15px; font-weight: 300; line-height: 1.85;
+      color: var(--cream-dim); margin-bottom: 14px;
+    }
+    .ai-left p strong { color: var(--cream); font-weight: 500; }
+    .ai-stamp {
+      margin-top: 28px;
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px; color: var(--accent); letter-spacing: 0.1em;
+    }
+    .ai-stamp::before {
+      content: '';
+      width: 5px; height: 5px;
+      background: var(--accent); border-radius: 50%;
+      animation: dot-pulse 2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    .ai-card {
+      background: rgba(8,19,13,0.6);
+      border: 1px solid var(--border);
+      border-radius: 1.5rem; padding: 30px;
+      position: relative; overflow: hidden;
+    }
+    .ai-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at top right, rgba(196,135,106,0.05) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .terminal-bar {
+      display: flex; align-items: center; gap: 6px;
+      margin-bottom: 18px;
+    }
+    .terminal-bar span { width: 9px; height: 9px; border-radius: 50%; }
+    .dot-r{background:#FF5F57;} .dot-y{background:#FEBC2E;} .dot-g{background:#28C840;}
+    .terminal-label {
+      margin-left: auto;
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px; color: var(--cream-muted); letter-spacing: 0.12em;
+    }
+    .app-list { display: flex; flex-direction: column; gap: 9px; }
+    .app-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px;
+      background: rgba(6,14,9,0.5);
+      border: 1px solid rgba(126,171,138,0.09);
+      border-radius: 10px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .app-item:hover { border-color: rgba(196,135,106,0.3); transform: translateX(3px); }
+    .app-ico {
+      width: 32px; height: 32px;
+      background: rgba(196,135,106,0.1);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent-light); flex-shrink: 0;
+    }
+    .app-name { font-size: 13px; font-weight: 500; color: var(--cream); margin-bottom: 2px; }
+    .app-desc { font-size: 11px; font-weight: 300; color: var(--cream-muted); }
+    .app-status {
+      margin-left: auto; flex-shrink: 0;
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px; letter-spacing: 0.08em;
+      padding: 3px 9px; border-radius: 100px;
+    }
+    .s-live { background: rgba(78,205,108,0.1); color: #4ECD6C; border: 1px solid rgba(78,205,108,0.18); }
+    .s-soon { background: rgba(126,171,138,0.08); color: var(--sage); border: 1px solid rgba(126,171,138,0.15); }
+
+    /* ── FEATURES ── */
+    .features-header {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 40px; align-items: end; margin-bottom: 56px;
+    }
+    .features-title {
+      font-family: 'Instrument Serif', serif;
+      font-weight: 400;
+      font-size: clamp(26px, 3vw, 44px);
+      line-height: 1.2; color: var(--cream);
+    }
+    .features-title em { font-style: italic; color: var(--accent-light); }
+    .features-desc {
+      font-size: 15px; font-weight: 300;
+      line-height: 1.85; color: var(--cream-dim);
+    }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 18px;
+    }
+    .fcard {
+      background: rgba(5,12,8,0.7);
+      border: 1px solid var(--border);
+      border-radius: 1.5rem; padding: 32px 28px;
+      position: relative; overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    .fcard:hover { border-color: rgba(196,135,106,0.28); transform: translateY(-3px); }
+    .fcard::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at top left, rgba(196,135,106,0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .fcard-num {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px; letter-spacing: 0.18em;
+      color: var(--accent); margin-bottom: 24px; opacity: 0.8;
+    }
+    .fcard-ico { width: 36px; height: 36px; color: var(--accent-light); margin-bottom: 16px; opacity: 0.85; }
+    .fcard-title { font-size: 16px; font-weight: 600; color: var(--cream); margin-bottom: 9px; line-height: 1.3; }
+    .fcard-desc { font-size: 13px; font-weight: 300; line-height: 1.8; color: var(--cream-dim); margin-bottom: 18px; }
+
+    /* Shuffler */
+    .cstack { position: relative; height: 84px; }
+    .scard {
+      position: absolute; width: 100%;
+      background: rgba(196,135,106,0.06);
+      border: 1px solid rgba(196,135,106,0.13);
+      border-radius: 9px; padding: 10px 13px;
+      font-size: 12px; font-weight: 400; color: var(--cream-dim);
+      transition: all 0.55s cubic-bezier(0.34,1.56,0.64,1);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .scard::before { content: '▸'; color: var(--accent); font-size: 8px; flex-shrink: 0; }
+    .scard.p0 { top:0; opacity:1; z-index:3; background:rgba(196,135,106,0.1); color:var(--cream); }
+    .scard.p1 { top:8px; opacity:0.5; z-index:2; transform:scale(0.97); }
+    .scard.p2 { top:16px; opacity:0.2; z-index:1; transform:scale(0.94); }
+
+    /* Typewriter */
+    .tw-feed {
+      background: rgba(4,10,6,0.7);
+      border: 1px solid rgba(126,171,138,0.1);
+      border-radius: 9px; padding: 13px 15px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px; color: var(--sage-light);
+      min-height: 54px; line-height: 1.6;
+    }
+    .live-dot {
+      display: inline-block; width: 6px; height: 6px;
+      background: #4ECD6C; border-radius: 50%;
+      margin-right: 7px;
+      animation: dot-pulse 1.5s ease-in-out infinite;
+      vertical-align: middle;
+    }
+    .cblink {
+      display: inline-block; width: 2px; height: 11px;
+      background: var(--sage); margin-left: 1px;
+      vertical-align: middle;
+      animation: blink 1s step-end infinite;
+    }
+
+    /* Week grid */
+    .wgrid { display: grid; grid-template-columns: repeat(7,1fr); gap: 5px; margin-top: 18px; }
+    .wcell {
+      aspect-ratio: 1; border-radius: 7px;
+      background: rgba(126,171,138,0.05);
+      border: 1px solid rgba(126,171,138,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px; color: var(--cream-muted);
+      transition: all 0.3s ease;
+    }
+    .wcell.on { background: rgba(196,135,106,0.16); border-color: var(--accent); color: var(--accent-light); transform: scale(1.07); }
+
+    /* ── PHILOSOPHY / ORIGIN ── */
+    .philosophy { text-align: center; position: relative; overflow: hidden; }
+    .philosophy-bg {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=1400&q=60');
+      background-size: cover; background-position: center;
+      opacity: 0.04;
+    }
+    .philosophy-content { position: relative; z-index: 1; max-width: 820px; margin: 0 auto; }
+    .phil-before {
+      font-size: clamp(14px, 1.7vw, 17px);
+      font-weight: 300; color: var(--cream-muted);
+      letter-spacing: 0.04em; margin-bottom: 24px;
+    }
+    .phil-main {
+      font-family: 'Instrument Serif', serif;
+      font-weight: 400;
+      font-size: clamp(30px, 4.8vw, 66px);
+      line-height: 1.12; color: var(--cream);
+    }
+    .phil-main em { font-style: italic; color: var(--accent-light); }
+    .phil-divider {
+      width: 1px; height: 48px;
+      background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+      margin: 44px auto;
+    }
+
+    /* The dancer reveal */
+    .dancer-reveal {
+      border: 1px solid rgba(196,135,106,0.2);
+      border-radius: 1.25rem;
+      padding: 36px 44px;
+      position: relative;
+      background: rgba(196,135,106,0.04);
+      overflow: hidden;
+    }
+    .dancer-reveal::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, rgba(196,135,106,0.05) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .dancer-tag {
+      display: inline-block;
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 18px;
+      opacity: 0.8;
+    }
+    .dancer-text {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic; font-weight: 400;
+      font-size: clamp(18px, 2.2vw, 26px);
+      line-height: 1.65; color: var(--cream-dim);
+    }
+    .dancer-text strong { color: var(--cream); font-style: italic; }
+
+    .phil-quote {
+      margin-top: 44px;
+      font-size: clamp(14px, 1.7vw, 18px);
+      font-weight: 300; font-style: italic;
+      color: var(--cream-dim); line-height: 1.8;
+      max-width: 580px; margin-left: auto; margin-right: auto;
+    }
+
+    /* ── EXPERIENCE ── */
+    .exp-layout {
+      display: grid; grid-template-columns: 240px 1fr;
+      gap: 80px; margin-top: 52px;
+    }
+    .exp-sidebar h3 {
+      font-family: 'Instrument Serif', serif;
+      font-weight: 400;
+      font-size: clamp(22px, 2.4vw, 34px);
+      line-height: 1.25; color: var(--cream); margin-bottom: 16px;
+    }
+    .exp-sidebar p {
+      font-size: 13px; font-weight: 300; line-height: 1.85;
+      color: var(--cream-dim); margin-bottom: 32px;
+    }
+    .exp-stat { padding: 16px 0; border-bottom: 1px solid rgba(126,171,138,0.09); }
+    .exp-num {
+      font-family: 'Instrument Serif', serif;
+      font-size: 36px; font-weight: 400;
+      color: var(--accent-light); line-height: 1; margin-bottom: 4px;
+    }
+    .exp-lbl {
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-muted);
+    }
+    .exp-timeline { display: flex; flex-direction: column; }
+    .exp-item {
+      display: grid; grid-template-columns: 100px 1fr;
+      gap: 24px; padding: 28px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: padding-left 0.25s ease;
+    }
+    .exp-item:hover { padding-left: 8px; }
+    .exp-item:first-child { padding-top: 0; }
+    .exp-yr {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px; color: var(--sage);
+      letter-spacing: 0.07em; padding-top: 3px;
+      line-height: 1.6; opacity: 0.75;
+    }
+    .exp-role { font-size: 15px; font-weight: 600; color: var(--cream); margin-bottom: 2px; }
+    .exp-co { font-size: 12px; color: var(--accent-light); margin-bottom: 9px; }
+    .exp-desc { font-size: 13px; font-weight: 300; line-height: 1.8; color: var(--cream-muted); }
+    .exp-tags { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px; }
+    .tag {
+      display: inline-block; padding: 3px 9px; border-radius: 100px;
+      background: rgba(196,135,106,0.08);
+      border: 1px solid rgba(196,135,106,0.16);
+      font-size: 9px; letter-spacing: 0.09em;
+      color: var(--accent-light); text-transform: uppercase;
+      font-family: 'Geist Mono', monospace;
+    }
+
+    /* ── CTA ── */
+    .cta-sec { text-align: center; }
+    .cta-sec h2 {
+      font-family: 'Instrument Serif', serif;
+      font-weight: 400; font-style: italic;
+      font-size: clamp(28px, 4vw, 56px);
+      line-height: 1.2; color: var(--cream); margin-bottom: 16px;
+    }
+    .cta-sec p {
+      font-size: 15px; font-weight: 300;
+      color: var(--cream-dim); max-width: 420px;
+      margin: 0 auto 36px; line-height: 1.75;
+    }
+    .cta-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg-5);
+      border-top: 1px solid rgba(126,171,138,0.08);
+      padding: 60px 7vw 36px;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr;
+      gap: 60px; margin-bottom: 48px;
+    }
+    .footer-brand h3 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 20px; font-weight: 400;
+      color: var(--cream); margin-bottom: 10px;
+    }
+    .footer-brand p {
+      font-size: 13px; font-weight: 300;
+      color: var(--cream-muted); line-height: 1.75; max-width: 260px;
+    }
+    .footer-col h4 {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--sage);
+      margin-bottom: 16px;
+    }
+    .footer-col a {
+      display: block; font-size: 13px; font-weight: 300;
+      color: var(--cream-muted); text-decoration: none;
+      margin-bottom: 9px;
+      transition: color 0.2s, transform 0.2s;
+    }
+    .footer-col a:hover { color: var(--cream); transform: translateX(3px); }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+    .footer-copy { font-size: 11px; font-weight: 300; color: var(--cream-muted); }
+    .footer-claude {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--cream-muted);
+    }
+    .footer-claude-dot { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; }
+
+    /* ── REVEAL ── */
+    .reveal {
+      opacity: 0; transform: translateY(26px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    .d1{transition-delay:0.1s;} .d2{transition-delay:0.2s;} .d3{transition-delay:0.3s;} .d4{transition-delay:0.4s;}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:860px){
+      nav{gap:14px;padding:10px 18px;}
+      .nav-links{display:none;}
+      .ai-inner,.features-header,.exp-layout{grid-template-columns:1fr;gap:36px;}
+      .features-grid{grid-template-columns:1fr;}
+      .exp-item{grid-template-columns:1fr;gap:5px;}
+      .footer-grid{grid-template-columns:1fr;gap:28px;}
+      .footer-bottom{flex-direction:column;gap:10px;text-align:center;}
+      .dancer-reveal{padding:28px 24px;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="#" class="nav-logo">Jason Pettigrew</a>
+    <ul class="nav-links">
+      <li><a href="#ai">AI Work</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#" class="claude-pill">
+      <span class="claude-pill-dot"></span>
+      Engineered with Claude
+    </a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero s0" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <div class="eyebrow-line"></div>
+        <span>Product Leader · New York</span>
+      </div>
+      <span class="hero-line1">Entertainment, commerce</span>
+      <span class="hero-line2">&amp; fan experience.</span>
+      <p class="hero-sub">
+        Senior Product Leader building world-class digital products at the intersection of entertainment, ecommerce, and human experience — currently shipping the official hospitality platform for FIFA World Cup 2026™.
+      </p>
+      <div class="hero-actions">
+        <a href="#experience" class="btn-primary">
+          View My Work
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#ai" class="btn-ghost">
+          See AI Projects
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <span>scroll</span>
+    </div>
+  </section>
+
+  <!-- AI SECTION -->
+  <section class="s1" id="ai" style="padding:120px 7vw;">
+    <div class="ai-inner">
+      <div class="ai-left">
+        <div class="section-label reveal">Built with AI</div>
+        <h2 class="reveal d1">This site was built<br /><em>entirely with Claude.</em></h2>
+        <p class="reveal d2">I'm a product leader who doesn't just spec AI features — I <strong>build with AI</strong>. This portfolio was designed and coded through a collaborative session with Claude, and it's the first of many experiments you'll find here.</p>
+        <p class="reveal d2">The mini-apps below are proof-of-concepts I'm developing using <strong>Claude's API and Anthropic's tooling</strong> — exploring what's possible at the intersection of PM thinking and hands-on AI building.</p>
+        <div class="ai-stamp reveal d3">Claude Sonnet · Vercel · February 2026</div>
+      </div>
+      <div class="ai-card reveal d2">
+        <div class="terminal-bar">
+          <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+          <span class="terminal-label">AI PROJECTS</span>
+        </div>
+        <div class="app-list">
+          <div class="app-item">
+            <div class="app-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+            <div><div class="app-name">This Site</div><div class="app-desc">One-shot design &amp; code via Claude</div></div>
+            <div class="app-status s-live">LIVE</div>
+          </div>
+          <div class="app-item">
+            <div class="app-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg></div>
+            <div><div class="app-name">PM Brief Generator</div><div class="app-desc">AI-assisted product requirements drafting</div></div>
+            <div class="app-status s-soon">SOON</div>
+          </div>
+          <div class="app-item">
+            <div class="app-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+            <div><div class="app-name">Stakeholder Simulator</div><div class="app-desc">Practice difficult PM conversations with AI</div></div>
+            <div class="app-status s-soon">SOON</div>
+          </div>
+          <div class="app-item">
+            <div class="app-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+            <div><div class="app-name">More in the works...</div><div class="app-desc">Exploring what Claude can build for PMs</div></div>
+            <div class="app-status s-soon">TBD</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUE PROPS -->
+  <section class="s2" id="about" style="padding:120px 7vw;">
+    <div class="features-header">
+      <div>
+        <div class="section-label reveal">What I bring</div>
+        <h2 class="features-title reveal d1">Three reasons to<br /><em>bring me on board.</em></h2>
+      </div>
+      <p class="features-desc reveal d2">From JP Morgan's trading floors to Endeavor's entertainment empire to the world's biggest sporting event — a decade of shipping products that move the needle.</p>
+    </div>
+    <div class="features-grid">
+
+      <div class="fcard reveal">
+        <div class="fcard-num">01 — Pedigree</div>
+        <svg class="fcard-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 00-1-1h-2a1 1 0 00-1 1v5m4 0H9"/></svg>
+        <div class="fcard-title">Elite Pedigree</div>
+        <div class="fcard-desc">Finance, enterprise tech, and entertainment — organizations that demand excellence at scale.</div>
+        <div class="cstack" id="stackCards">
+          <div class="scard p0">On Location · FIFA World Cup 2026™</div>
+          <div class="scard p1">Endeavor · Versity (w/ Harvard)</div>
+          <div class="scard p2">IBM · J.P. Morgan · Wunderkind</div>
+        </div>
+      </div>
+
+      <div class="fcard reveal d1">
+        <div class="fcard-num">02 — Lifecycle</div>
+        <svg class="fcard-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <div class="fcard-title">Full Lifecycle Ownership</div>
+        <div class="fcard-desc">Discovery to deployment. Roadmap to release. I own every phase and bring cross-functional teams with me.</div>
+        <div class="tw-feed">
+          <span class="live-dot"></span><span id="twText"></span><span class="cblink"></span>
+        </div>
+      </div>
+
+      <div class="fcard reveal d2">
+        <div class="fcard-num">03 — Alignment</div>
+        <svg class="fcard-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        <div class="fcard-title">Stakeholder Alignment</div>
+        <div class="fcard-desc">FIFA. Harvard. Endeavor. Fortune 500. I navigate complexity and get diverse groups moving in one direction.</div>
+        <div class="wgrid" id="weekGrid">
+          <div class="wcell">S</div><div class="wcell">M</div><div class="wcell">T</div>
+          <div class="wcell">W</div><div class="wcell">T</div><div class="wcell">F</div><div class="wcell">S</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY + DANCER REVEAL -->
+  <section class="philosophy s3" style="padding:120px 7vw;">
+    <div class="philosophy-bg"></div>
+    <div class="philosophy-content">
+      <p class="phil-before reveal">Most product managers focus on shipping features and managing backlogs.</p>
+      <div class="phil-divider"></div>
+      <h2 class="phil-main reveal d1">I focus on the <em>human moment</em><br />inside every product.</h2>
+      <div class="phil-divider"></div>
+
+      <!-- THE REVEAL -->
+      <div class="dancer-reveal reveal d2">
+        <div class="dancer-tag">A little something about me</div>
+        <p class="dancer-text">
+          Before product management, I was a <strong>professional dancer in Los Angeles</strong>. I spent years on stage understanding what it means to hold an audience — the timing, the presence, the craft of creating a moment that lands.<br /><br />
+          That's still what drives me. I look for the most human parts of any product and I fight to protect them. Entertainment isn't just an industry I work in. <strong>It's where I come from.</strong>
+        </p>
+      </div>
+
+      <p class="phil-quote reveal d3">"Ideation · Adaptability · Futuristic · Arranger · Communication — built for navigating ambiguity and delivering in the dynamic, high-stakes world of entertainment and live experience."</p>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section class="s4" id="experience" style="padding:120px 7vw;">
+    <div class="section-label reveal">Career</div>
+    <div class="exp-layout">
+      <div class="exp-sidebar reveal">
+        <h3>A decade of building products that scale.</h3>
+        <p>From ecommerce to enterprise, entertainment to education — each role added a new dimension to how I lead, build, and deliver.</p>
+        <div class="exp-stat"><div class="exp-num">10+</div><div class="exp-lbl">Years in Product</div></div>
+        <div class="exp-stat"><div class="exp-num">250k+</div><div class="exp-lbl">Users Impacted</div></div>
+        <div class="exp-stat"><div class="exp-num">4</div><div class="exp-lbl">Industries Mastered</div></div>
+      </div>
+      <div class="exp-timeline reveal d1">
+
+        <div class="exp-item">
+          <div class="exp-yr">2024 –<br/>Present</div>
+          <div>
+            <div class="exp-role">Lead Product Manager</div>
+            <div class="exp-co">On Location Experiences · FIFA World Cup 2026™</div>
+            <div class="exp-desc">Implementing the official ecommerce &amp; hospitality platform for the 2026 FIFA World Cup. Driving commerce, ticketing, and fan experience at unprecedented global scale — partnering with FIFA, Ticketing Ops, Sales Strategy, and Client Success.</div>
+            <div class="exp-tags"><span class="tag">eCommerce</span><span class="tag">FIFA 2026</span><span class="tag">Ticketing</span></div>
+          </div>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-yr">2023 –<br/>2024</div>
+          <div>
+            <div class="exp-role">Lead Product Manager — Versity</div>
+            <div class="exp-co">Endeavor · Harvard University Partnership</div>
+            <div class="exp-desc">Led 0→1 development of Versity, a video-first L&amp;D platform. Launched self-serve demo experiences and interactive learning tools that improved course completion rates 10%+.</div>
+            <div class="exp-tags"><span class="tag">EdTech</span><span class="tag">Harvard</span><span class="tag">0→1</span></div>
+          </div>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-yr">2021 –<br/>2022</div>
+          <div>
+            <div class="exp-role">Senior Product Manager</div>
+            <div class="exp-co">Wunderkind (formerly BounceX)</div>
+            <div class="exp-desc">Owned the primary productivity app for multi-channel ecommerce marketing campaigns. Led two scrum teams and worked with the Founder/CEO to shape a marketing OS vision for entrepreneurs.</div>
+            <div class="exp-tags"><span class="tag">Martech</span><span class="tag">eCommerce</span><span class="tag">People Manager</span></div>
+          </div>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-yr">2019 –<br/>2021</div>
+          <div>
+            <div class="exp-role">Product Manager</div>
+            <div class="exp-co">IBM</div>
+            <div class="exp-desc">Product lead for IBM's w3 iOS mobile intranet, serving 350k+ employees. Rearchitected data sources with GraphQL and built an Instagram-style personalized news feed.</div>
+            <div class="exp-tags"><span class="tag">Enterprise</span><span class="tag">Mobile</span><span class="tag">iOS</span></div>
+          </div>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-yr">2015 –<br/>2019</div>
+          <div>
+            <div class="exp-role">Product Manager</div>
+            <div class="exp-co">J.P. Morgan</div>
+            <div class="exp-desc">Drove product strategy for J.P. Morgan Online, serving 250k+ users. Owned the Action Center portal and eSign legal compliance rollout across Design, Tech, Legal, and Senior Leadership.</div>
+            <div class="exp-tags"><span class="tag">FinTech</span><span class="tag">Portal</span><span class="tag">250k+ Users</span></div>
+          </div>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-yr">Community<br/>3 Years</div>
+          <div>
+            <div class="exp-role">Volunteer Mentor</div>
+            <div class="exp-co">Minds Matter NYC</div>
+            <div class="exp-desc">Mentoring high-achieving students from low-income families — providing college preparation, coaching, and support to help them access top universities.</div>
+            <div class="exp-tags"><span class="tag">Mentorship</span><span class="tag">Education</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-sec s5" id="contact" style="padding:120px 7vw;">
+    <div class="section-label reveal" style="justify-content:center;">Let's Connect</div>
+    <h2 class="reveal d1">Ready to build<br />something remarkable?</h2>
+    <p class="reveal d2">Senior Product Leader. Columbia BA. New York based. Deeply at home in entertainment, commerce, and the human side of technology.</p>
+    <div class="cta-btns reveal d3">
+      <a href="mailto:jasonjpettigrew@gmail.com" class="btn-primary">
+        Get In Touch
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="https://www.linkedin.com/in/jasonpettigrew" target="_blank" class="btn-ghost">
+        LinkedIn
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>Jason Pettigrew</h3>
+        <p>Senior Product Leader at the intersection of entertainment, ecommerce, and human experience.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <a href="#ai">AI Work</a>
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="mailto:jasonjpettigrew@gmail.com">Email</a>
+        <a href="https://www.linkedin.com/in/jasonpettigrew" target="_blank">LinkedIn</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Jason Pettigrew · New York, NY</div>
+      <div class="footer-claude">
+        <span class="footer-claude-dot"></span>
+        Engineered with Claude
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Nav scroll
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 80));
+
+    // Reveal on scroll
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    // Shuffler
+    const scards = Array.from(document.querySelectorAll('#stackCards .scard'));
+    const spos = ['p0','p1','p2'];
+    let sorder = [0,1,2];
+    setInterval(() => {
+      sorder.push(sorder.shift());
+      scards.forEach((c,i) => { c.className = 'scard ' + spos[sorder.indexOf(i)]; });
+    }, 2800);
+
+    // Typewriter
+    const msgs = [
+      'Shipping FIFA WC 2026 hospitality platform...',
+      'Led Versity 0→1 with Harvard University.',
+      'Delivered Action Center to 250k+ users.',
+      'Rebuilt IBM w3 iOS for 350k+ employees.',
+      'Launched Wunderkind marketing OS vision.',
+      '10+ years. Full ownership at every stage.',
+    ];
+    let mi=0, ci=0, del=false;
+    const tw = document.getElementById('twText');
+    function type(){
+      const m = msgs[mi];
+      tw.textContent = del ? m.slice(0,--ci) : m.slice(0,++ci);
+      if(!del && ci===m.length){ del=true; setTimeout(type,2000); return; }
+      if(del && ci===0){ del=false; mi=(mi+1)%msgs.length; }
+      setTimeout(type, del?26:50);
+    }
+    type();
+
+    // Week grid
+    const wcells = document.querySelectorAll('#weekGrid .wcell');
+    const wdays=[1,2,3,4,5]; let wi=0;
+    function animW(){
+      wcells.forEach(c=>c.classList.remove('on'));
+      if(wi<wdays.length){ wcells[wdays[wi]].classList.add('on'); wi++; setTimeout(animW,280); }
+      else { setTimeout(()=>{ wi=0; animW(); },2200); }
+    }
+    setTimeout(animW,1000);
+  </script>
+</body>
+</html>
